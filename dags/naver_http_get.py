@@ -27,7 +27,7 @@ class NaverServerSensor(BaseSensorOperator):
         super(NaverServerSensor, self).__init__(*args, **kwargs)
           
     def poke(self, context):
-        response = requests.get(url="https://naver.com")
+        response = requests.get(url="https://naver.com", verify=False)
         status_code = response.status_code
         print("status code = " + str(status_code))
         if status_code == 200:
@@ -39,7 +39,8 @@ with DAG("naver_sensor_dag", default_args=default_args, schedule_interval="5 4 *
     task_1 = SimpleHttpOperator(
         dag=sensor_dag,
         task_id='get_naver_with_sensor',
-        endpoint='/',
+        http_conn_id="http_naver",
+        endpoint="/",
         method="get"
         )
     sensor = NaverServerSensor(
